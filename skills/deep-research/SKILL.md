@@ -168,3 +168,56 @@ Each agent searches, reads sources, and returns findings. The main session synth
 "What's happening with the US housing market right now?"
 "Investigate the competitive landscape for AI code editors"
 ```
+
+## IMOLED-Übersetzungsblock (lokal, 18.09.2026)
+
+Zwei Riegel, gehoben aus `advaitpaliwal/feynman` (prompts/deepresearch.md, MIT, Volltext gelesen 17.09.2026). Sie gelten vor dem Workflow oben und überstimmen ihn, wo sie kollidieren.
+
+### Riegel 1: Größen-Entscheid VOR der ersten Suche
+
+Bevor irgendein Werkzeug läuft, steht der Umfang fest und wird im Plan festgehalten:
+
+| Frage | Modus | Subagenten |
+|---|---|---|
+| Einzelne Tatsache, "was ist X", in 3 bis 10 Aufrufen beantwortbar | direkt | keine |
+| Vergleich von 2 bis 3 Dingen | geteilt | 2 |
+| Breite Übersicht, Thema mit mehreren Feldern | geteilt | 3 bis 4 |
+| Mehrere Fachgebiete zugleich | geteilt | 4 bis 6 |
+
+Ein "was ist X" wird NIE zum Mehragenten-Lauf aufgeblasen, auch nicht, wenn das Thema groß klingt. Erst wenn Andreas ausdrücklich Landschaft, Vergleich, Benchmarks oder Vollabdeckung verlangt, wechselt der Modus. Im direkten Modus trotzdem mindestens drei verschiedene Suchanfragen (Begriff und Herkunft, Mechanik, heutiger Einsatz und Vergleich). Verifier und Reviewer laufen im direkten Modus in der Hauptsitzung, nicht als Subagenten.
+
+Grund: Fehlerkosten statt Laufpreis gilt für Modelle, nicht für Aufwand. Ein aufgeblasener Lauf erzeugt mehr Quellen zu prüfen, nicht mehr Wahrheit.
+
+### Riegel 2: Pflicht-Artefakte auf Platte, Beleg-Beiblatt zur Endfassung
+
+Jeder Lauf hinterlässt vier Dateien, Ablage `Cowork/`-Ordner des Space, Kürzel aus dem Thema (klein, Bindestriche, höchstens fünf Wörter):
+
+1. `JJJJ-MM-TT_PLAN_<kuerzel>.md`: Leitfragen, benötigte Belege, Größen-Entscheid aus Riegel 1, Aufgabenliste, Prüf-Log, Entscheidungs-Log. Wird vor der ersten Suche geschrieben.
+2. `JJJJ-MM-TT_ENTWURF_<kuerzel>.md`: Rohfassung ohne Zitate, danach die zitierte Fassung im selben Ordner als `..._ENTWURF-ZITIERT_<kuerzel>.md`.
+3. `JJJJ-MM-TT_RECHERCHE_<kuerzel>.md`: Endfassung.
+4. `JJJJ-MM-TT_RECHERCHE_<kuerzel>.beleg.md`: das Beleg-Beiblatt.
+
+Das Beleg-Beiblatt trägt:
+
+```markdown
+# Beleg: <Thema>
+
+- Datum: <Datum>
+- Größen-Entscheid: direkt | geteilt (n Subagenten)
+- Runden: <Zahl>
+- Quellen konsultiert: <Zahl und Liste>
+- Quellen übernommen: <Zahl und Liste>
+- Quellen verworfen: <tot, unprüfbar, entfernt, mit Grund>
+- Prüfung: BESTANDEN | BESTANDEN MIT ANMERKUNGEN | BLOCKIERT
+- Plan: <Pfad>
+- Recherche-Dateien: <Pfade>
+```
+
+Regeln dazu:
+
+- Fällt nach dem Plan eine Fähigkeit aus (Werkzeug fehlt, Quelle nicht erreichbar, PDF nicht lesbar), läuft der Rest weiter und die Endfassung trägt `Prüfung: BLOCKIERT` oder `BESTANDEN MIT ANMERKUNGEN` mit der Liste der fehlenden Prüfungen. Ein Lauf endet nie in reinem Chat-Text ohne Datei.
+- Verifier (Zitate, URLs prüfen) läuft VOR dem Reviewer (unbelegte Aussagen, Einzelquellen, überhöhte Sicherheit), nie beide parallel. Der Reviewer prüft die zitierte Fassung, nicht den Rohentwurf.
+- Ein Befund gilt erst als behoben, wenn ein `grep` auf der Endfassung beweist, dass der alte Wortlaut weg und der neue drin ist. Das Beiblatt sagt "behoben" erst nach diesem Beweis (deckt sich mit Regel "Prüfe, was du GETAN hast").
+- Jede Zahl, Tabelle, Grafik oder Benchmark in der Endfassung zeigt auf eine Quellen-URL, eine Recherche-Datei oder eine Befehlsausgabe. Was das nicht hat, fliegt raus oder wird als Schluss markiert.
+
+Grund: Regel 14 Quellen-Doktrin, Beleggrad mitführen. Das Beiblatt macht den Beleggrad zu einer Datei, die neben dem Ergebnis liegt, statt zu einer Erinnerung in der Sitzung.
